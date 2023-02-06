@@ -1,4 +1,8 @@
+mod index;
+mod users;
 use axum::{Router, body::Body, routing::get};
+use index::index;
+use users::users;
 
 // public function that returns handle to all routers
 pub fn create_routes() -> Router<(),Body> {
@@ -8,10 +12,5 @@ pub fn create_routes() -> Router<(),Body> {
 }
 
 
-async fn index() -> String {
-    "Hello World!".to_owned()
-}
 
-async fn users() -> String {
-    "Get all users".to_owned()
-}
+

@@ -1,9 +1,10 @@
-use axum::{Router,routing::get};
+use routes::create_routes;
+
+mod routes;
 
 pub async fn run() {
-    //Create a route for home page
-    let app = Router::new()
-        .route("/",get(index));
+    //Call create_routes() from the routes module for handling all routes of the application
+    let app = create_routes();
     
     //Using Hyper to run this server
     axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
@@ -12,6 +13,3 @@ pub async fn run() {
         .unwrap();
 }
 
-async fn index() -> String {
-    "Hello World!".to_owned()
-}

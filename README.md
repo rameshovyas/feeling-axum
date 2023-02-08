@@ -58,8 +58,18 @@ This project is available in **post_json** directory of this repo.
 
 ## Dealing with Path Variables <a name="path_variables"></a>
 Simple application in axum web that demonstrates how we can extract path variables from url in an api call.
-Path variables can be mapped as parameters to route handler functions. See below code that defines a route handler for **http://localhost/25**. The value **25** will be mapped to the id variable in the route handler. Using **Path** we can extract it as shown in code below
+Path variables can be mapped as parameters to route handler functions. See below code that defines a route handler for **http://localhost/25**. The value **25** will be mapped to the id variable in the route handler. Using **Path** we can extract it as shown in code below:
 
+#### Routes
+```
+pub fn create_routes() -> Router<(),Body> {
+    Router::new()
+           .route("/path_variables/:id", get(path_variables))
+}
+
+```
+
+#### Route handler function
 ```
 use axum::extract::Path;
 
@@ -67,3 +77,4 @@ pub async fn path_variables(Path(id) : Path<i32>) ->String {
     id.to_string()
 }
 ```
+The complete project can be found in **path_variables** directory in this repo.

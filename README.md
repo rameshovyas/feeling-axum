@@ -8,6 +8,7 @@ Feeling awesome with Axum
 4. [Posting a String Data](#post_string)
 5. [Posting JSON Data](#post_json)
 6. [Dealing with Path Variables](#path_variables)
+7. [Handling Query Parameters](#query_params)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -78,3 +79,29 @@ pub async fn path_variables(Path(id) : Path<i32>) ->String {
 }
 ```
 The complete project can be found in **path_variables** directory in this repo.
+
+## Handling Query Parameters <a name="query_params"></a>
+As we have see in previous section regarding path variables, how we can extract path variables simply mapping it with parametrs to handler function. Query parameters are bit different to deal with as they are not part of path. Query parameters are list of key value pairs seprated by a **&** and are added to the url after **?**. To deal with query parameter we need to do bit like we have handled json data in previous section. We will be creating a struct representing our query parameters and like JSON we need to deserialize it so we will be again using **serde** . Here we have also used Serialize as we will be returning a JSON response. Below code show how we can handle this type of url : http://localhost:3000/query_params?category=programming&year=2023 . Here we have two query params (category and year). We have just echoed back the query parameters in JSON format for now, but the logic for handling query parameters is explained.
+
+```
+use axum::{extract::Query, Json};
+use serde::{Serialize,Deserialize};
+
+#[derive(Serialize,Deserialize)]
+pub struct QueryParams {
+    category : String,
+    year: i32
+}
+pub async fn query_params(Query(query): Query<QueryParams>) -> Json<QueryParams> {
+    Json(query)
+}
+```
+#### The JSON response we will be getting
+```
+{
+  "category": "programming",
+  "year": 2023
+}
+```
+
+The complete project can be found in **query_params** directory of this repo.

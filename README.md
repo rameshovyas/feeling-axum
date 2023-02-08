@@ -7,6 +7,7 @@ Feeling awesome with Axum
 3. [Routing](#routing)
 4. [Posting a String Data](#post_string)
 5. [Posting JSON Data](#post_json)
+6. [Dealing with Path Variables](#path_variables)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -54,3 +55,15 @@ pub async fn echo_post_json( Json(body): Json<PostedJsonData>) -> Json<JsonRespo
 ```
 
 This project is available in **post_json** directory of this repo.
+
+## Dealing with Path Variables <a name="path_variables"></a>
+Simple application in axum web that demonstrates how we can extract path variables from url in an api call.
+Path variables can be mapped as parameters to route handler functions. See below code that defines a route handler for **http://localhost/25**. The value **25** will be mapped to the id variable in the route handler. Using **Path** we can extract it as shown in code below
+
+```
+use axum::extract::Path;
+
+pub async fn path_variables(Path(id) : Path<i32>) ->String {
+    id.to_string()
+}
+```

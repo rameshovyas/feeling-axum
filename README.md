@@ -9,6 +9,9 @@ Feeling awesome with Axum
 5. [Posting JSON Data](#post_json)
 6. [Dealing with Path Variables](#path_variables)
 7. [Handling Query Parameters](#query_params)
+8. [Extracting User Agent - Standard Headers ](#user_agent)
+9. [Extracting Data from Custom Headers](#custom_headers)
+
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -105,3 +108,34 @@ pub async fn query_params(Query(query): Query<QueryParams>) -> Json<QueryParams>
 ```
 
 The complete project can be found in **query_params** directory of this repo.
+
+
+## Extracting User Agent - Standard Headers <a name="user_agent"></a>
+To extract standard header data for eg. user agent we will be using **TypedHeader** extractor. For this we need to add **header** feature to axum in cargo.toml file, that can be done as follows
+> cargo add axum -F headers
+
+An example route handler for extracting user agent is as follows : 
+
+```
+use axum::{TypedHeader, headers::UserAgent};
+pub async fn user_agent(TypedHeader(user_agent) : TypedHeader<UserAgent>) -> String{
+    user_agent.to_string()
+}
+```
+The complete project can be found in **std_headers** directory of this repo.
+
+## Extracting Data from Custom Headers <a name="custom_headers"></a>
+Many times we need to pass custom data withing headers, in axum how to extract custom headers is very simple we just need to use **HeaderMap** for this. HeaderMap can extract custom header data.
+
+```
+use axum::http::HeaderMap;
+
+pub async fn custom_headers(headers : HeaderMap) -> String{
+   let message_value = headers.get("x-message").unwrap();
+   let message = message_value.to_str().unwrap().to_owned();
+   message
+}
+
+```
+
+The complete project can be found in **custom_headers** directory of this repo.

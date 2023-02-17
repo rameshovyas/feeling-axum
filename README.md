@@ -11,7 +11,7 @@ Feeling awesome with Axum
 7. [Handling Query Parameters](#query_params)
 8. [Extracting User Agent - Standard Headers ](#user_agent)
 9. [Extracting Data from Custom Headers](#custom_headers)
-
+10. [CORS](#cors)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -139,3 +139,32 @@ pub async fn custom_headers(headers : HeaderMap) -> String{
 ```
 
 The complete project can be found in **custom_headers** directory of this repo.
+
+## CORS <a name="cors"></a>
+
+Axum does not have any middleware system of its own, where as it uses middleware from **tower** and **tower-http**. So we need to add that into our project by the following command.
+> cargo add tower-http -F cors
+
+After adding tower-http with cors feature, we need to add the following code for adding corslayer and routes.
+```
+pub fn create_routes() -> Router<(),Body> {
+   
+    //Setting up the CORS Layer
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET,Method::POST])
+        .allow_origin(Any);
+    
+    Router::new()
+            .route("/", get(index))
+            .route("/users",get(users))
+            .route("/echo_post_string", post(echo_post_string))
+            .route("/echo_post_json", post(echo_post_json))
+            .route("/path_variables/:id", get(path_variables))
+            .route("/query_params", get(query_params))
+            .route("/user_agent", get(user_agent))
+            .route("/custom_headers", get(custom_headers))
+            .layer(cors) // Adding the CorsLayer at the last so that it effects all the routes
+}
+```
+
+The complete project can be found in **cors** directory of this repo.

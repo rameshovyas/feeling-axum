@@ -12,6 +12,7 @@ Feeling awesome with Axum
 8. [Extracting User Agent - Standard Headers ](#user_agent)
 9. [Extracting Data from Custom Headers](#custom_headers)
 10. [CORS](#cors)
+11. [Sharing data among middleware layers](#shared_data)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -141,7 +142,6 @@ pub async fn custom_headers(headers : HeaderMap) -> String{
 The complete project can be found in **custom_headers** directory of this repo.
 
 ## CORS <a name="cors"></a>
-
 Axum does not have any middleware system of its own, where as it uses middleware from **tower** and **tower-http**. So we need to add that into our project by the following command.
 > cargo add tower-http -F cors
 
@@ -168,3 +168,77 @@ pub fn create_routes() -> Router<(),Body> {
 ```
 
 The complete project can be found in **cors** directory of this repo.
+
+## Sharing data among middleware layers <a name="shared_data"></a>
+This demo project show how we can use shared data amon middleware layers in axum. The conecpt is very simple we just added a layer with the dat ausing **Extension** . Now this shared data can be extracted from any route using the same Extension. The rule is we have to keep all routes where we want to share data above the layer in the routing sequence.
+
+The route routing sequence should be : 
+
+```
+mod index;
+mod users;
+mod echo_post_string;
+mod echo_post_json;
+mod path_variables;
+mod query_params;
+mod user_agent;
+mod custom_headers;
+mod middleware_data;
+
+use axum::{Router, body::Body, routing::get,routing::post, http::Method, Extension};
+use index::index;
+use tower_http::cors::{CorsLayer, Any};
+use users::users;
+use echo_post_string::echo_post_string;
+use echo_post_json::echo_post_json;
+use path_variables::path_variables;
+use query_params::query_params;
+use user_agent::user_agent;
+use custom_headers::custom_headers;
+use middleware_data::middleware_data;
+
+//Strcture representing shared data
+#[derive(Clone)]
+pub struct SharedData {
+    pub data: String,
+}
+
+
+// public function that returns handle to all routers
+pub fn create_routes() -> Router<(),Body> {
+   
+    //Setting up the CORS Layer
+    let cors = CorsLayer::new()
+        .allow_methods([Method::GET,Method::POST])
+        .allow_origin(Any);
+
+    //Instantiating shared data
+    let shared_data = SharedData { data : "This is shared data".to_owned(),} ;   
+    Router::new()
+            .route("/", get(index))
+            .route("/users",get(users))
+            .route("/echo_post_string", post(echo_post_string))
+            .route("/echo_post_json", post(echo_post_json))
+            .route("/path_variables/:id", get(path_variables))
+            .route("/query_params", get(query_params))
+            .route("/user_agent", get(user_agent))
+            .route("/custom_headers", get(custom_headers))
+            .route("/middleware_data", get(middleware_data))
+            .layer(cors) // Adding the CorsLayer at the last so that it effects all the routes
+
+            //adding layer for shared data
+            .layer(Extension(shared_data))
+}
+
+```
+
+And the this shared data can be extracted in the route handler as below : 
+
+```
+use axum::Extension;
+use super::SharedData;
+
+pub async fn middleware_data(Extension(shared_data):Extension<SharedData>) ->String {
+    shared_data.data
+}
+```

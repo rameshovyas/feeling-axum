@@ -262,3 +262,24 @@ pub async fn status_codes() ->impl IntoResponse {
 }
 ```
 The complete project is in **status_codes** directory.
+
+
+## Returning JSON Data<a name="json_response"></a>
+To return JSON data from a route we need to have a struct for the data and using **axum::Json** we can convert the struct data to JSON data, see the following route handler doing this.
+
+```
+use axum::Json;
+use serde::Serialize;
+
+#[derive(Serialize)]
+pub struct Data {
+    username: String,
+    age :i32,
+}
+
+pub async fn return_json() -> Json<Data> {
+    let data = Data {username:"ramesh".to_owned(), age:21,};
+    Json(data)
+}
+```
+The complete project is available in **returning_json** directory.

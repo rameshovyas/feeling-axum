@@ -14,6 +14,8 @@ Feeling awesome with Axum
 10. [CORS](#cors)
 11. [Sharing data among middleware layers](#shared_data)
 12. [Returning HTTP Response](#http_response)
+13. [Returning JSON Data](#json_response)
+14. [Validating Incoming JSON Data](#validate_json)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -283,3 +285,26 @@ pub async fn return_json() -> Json<Data> {
 }
 ```
 The complete project is available in **returning_json** directory.
+
+## Validating Incoming JSON Data<a name="validate_json"></a>
+To validate incoming JSON data we need to deserialize with serde, the following route handler does an example validation.
+
+```
+use axum::Json;
+use serde::Deserialize;
+
+#[derive(Deserialize)]
+pub struct RequestData {
+    username : String,
+    password : String, 
+    name : Option<String>,   
+}
+
+pub async fn validate_json(Json(data) : Json<RequestData>){
+    
+}
+```
+
+The **Option<String>** specifies that this field is optional field.
+
+The complete project can be found at *validate_json** directory.

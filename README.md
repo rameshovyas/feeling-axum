@@ -13,6 +13,7 @@ Feeling awesome with Axum
 9. [Extracting Data from Custom Headers](#custom_headers)
 10. [CORS](#cors)
 11. [Sharing data among middleware layers](#shared_data)
+12. [Returning HTTP Response](#http_response)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -242,3 +243,22 @@ pub async fn middleware_data(Extension(shared_data):Extension<SharedData>) ->Str
     shared_data.data
 }
 ```
+Find the complete project in **shared_data** directory.
+
+## Returning HTTP Response<a name="http_response"></a>
+This project demonstrates how we can return specific HTTP response from a route. For example if we want a route to respond 201 instead 200, we have to do modify our route handlers like below : 
+
+```
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+
+// Anything that implements IntoResponse can be returned from a handler
+// Use `impl IntoResponse` to avoid writing the whole type
+pub async fn status_codes() ->impl IntoResponse {
+    (
+        StatusCode::CREATED,
+        "This is 201 response and not 200".into_response()
+    )
+}
+```
+The complete project is in **status_codes** directory.

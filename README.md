@@ -16,6 +16,7 @@ Feeling awesome with Axum
 12. [Returning HTTP Response](#http_response)
 13. [Returning JSON Data](#json_response)
 14. [Validating Incoming JSON Data](#validate_json)
+15. [Using SeaORM to connect with postgres database](#db_seaorm)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -307,4 +308,14 @@ pub async fn validate_json(Json(data) : Json<RequestData>){
 
 The **Option<String>** specifies that this field is optional field.
 
-The complete project can be found at *validate_json** directory.
+The complete project can be found at **validate_json** directory.
+
+## Using SeaORM to connect with postgres database<a name="db_seaorm"></a>
+A simple project in axum rust to connect with postgres database and create models for the underline table so that data can be accessed inside the rust code. We have created **.env** file to store environment variable for database connection string. For handling environment variables we have used **dotenvy and dotenvy-macro** crates and for **orm** we have used **sea-orm**. The **sea-orm** itself requires **tokio** for async that is why that also has been included in the project refrence.
+
+We have used **sea-orl-cli** to generate model files
+> sea-orm-cli generate entity -o src/database
+
+This command generated model files in **src/database** directory.
+
+The complete project can be found at **db_seaorm** directory.

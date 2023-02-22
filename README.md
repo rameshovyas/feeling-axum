@@ -17,6 +17,7 @@ Feeling awesome with Axum
 13. [Returning JSON Data](#json_response)
 14. [Validating Incoming JSON Data](#validate_json)
 15. [Using SeaORM to connect with postgres database](#db_seaorm)
+16. [Passing Data To Route Handlers](#passing_data)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -319,3 +320,31 @@ We have used **sea-orl-cli** to generate model files
 This command generated model files in **src/database** directory.
 
 The complete project can be found at **db_seaorm** directory.
+
+## Passing Data To Route Handlers<a name="passing_data"></a>
+To pass data between route handlers we need to create a middleware layer extension below all the routes in which we wnat that data to be shared. See the routing and route handler code below : 
+
+### Routing logic
+```
+use axum::{Router, body::Body, routing::get,routing::post, Extension};
+use passing_data::passing_data;
+use sea_orm::DatabaseConnection;
+
+// public function that returns handle to all routers
+pub fn create_routes(database: DatabaseConnection) -> Router<(),Body> {
+    Router::new()
+           .route("/passing_data", post(passing_data))
+
+           //Creating extension layer to share this database connectuion with all other routes
+           .layer(Extension(database))
+}
+```
+### Route Handler
+```
+use axum::Extension;
+use sea_orm::DatabaseConnection;
+
+pub async fn passing_data(Extension(database) : Extension<DatabaseConnection>){
+
+}
+```

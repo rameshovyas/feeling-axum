@@ -18,6 +18,7 @@ Feeling awesome with Axum
 14. [Validating Incoming JSON Data](#validate_json)
 15. [Using SeaORM to connect with postgres database](#db_seaorm)
 16. [Passing Data To Route Handlers](#passing_data)
+17. [Inserting Data in Database using Sea ORM](#insert_data)
 
 ## Introduction to axum<a name="introduction"></a>
 [Axum]("https://crates.io/crates/axum") is a web application framework for Rust programming language. It is developed by the same people who developed [tokio]("https://tokio.rs/"). 
@@ -346,5 +347,28 @@ use sea_orm::DatabaseConnection;
 
 pub async fn passing_data(Extension(database) : Extension<DatabaseConnection>){
 
+}
+```
+
+## Inserting Data in Database using Sea ORM <a name="insert_data"></a>
+Demo project shows how we can use sea orm to insert a record in postgress database.
+
+```
+use axum::Extension;
+use sea_orm::{DatabaseConnection,Set, ActiveModelTrait};
+use crate::database::users;
+use chrono::{self, Utc};
+pub async  fn create_user(Extension(database) : Extension<DatabaseConnection>){
+    
+    let new_user = users::ActiveModel {
+        email :  Set("ramesh@vyas.com".to_owned()),
+        password :Set("123456".to_owned()),
+        name : Set("Ramesh Vyas".to_owned()),
+        created_on : Set(Utc::now().naive_utc()),     
+        ..Default::default()
+    };
+
+    let result = new_user.save(&database).await.unwrap();
+    dbg!(result);
 }
 ```

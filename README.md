@@ -1,5 +1,5 @@
 # feeling-axum
-Feeling awesome with Axum
+Feeling awesome with Axum - A Rust Framework for building RESTful APIs.
 
 # Table of contents
 1. [Introduction to axum](#introduction)

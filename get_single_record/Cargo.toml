@@ -1,0 +1,16 @@
+[package]
+name = "db_seaorm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.6.7"
+chrono = "0.4.23"
+dotenvy = "0.15.6"
+dotenvy_macro = "0.15.1"
+sea-orm = { version = "0.11.0", features = ["sqlx-postgres", "runtime-tokio-rustls"] }
+serde = "1.0.152"
+tokio = { version = "1.25.0", features = ["full"] }
+
